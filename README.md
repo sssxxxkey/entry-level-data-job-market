@@ -1,71 +1,57 @@
 # Entry-Level Data Job Market Analytics
 
-An end-to-end Python and SQL project that turns public U.S. Data Analyst job postings into an internship-preparation roadmap. The analysis focuses on entry-level and junior roles, compares skill demand across role families and locations, and produces Tableau-ready data.
+A self-directed portfolio project using public U.S. Data Analyst job postings. The goal is to practice Python, SQL, Pandas, and Tableau while answering practical questions about entry-level hiring.
 
-## Questions answered
+## Project questions
 
-1. Which technical skills appear most often in entry-level data job postings?
-2. How does skill demand differ across analyst role families?
-3. Which U.S. locations have the most entry-level opportunities?
-4. How often do postings disclose salary, offer remote work, or request prior experience?
-5. What should a student learn first to cover the broadest share of postings?
+1. Which skills appear most often in entry-level data job postings?
+2. How does skill demand differ by role, location, and work arrangement?
+3. How often do employers disclose salary?
+4. Which skills should a student prioritize?
 
 ## Data source
 
 - Kaggle: [Data Analyst Job Postings — Pay, Skills, Benefits](https://www.kaggle.com/datasets/lukebarousse/data-analyst-job-postings-google-search)
 - Publisher: Luke Barousse
-- Coverage in the downloaded snapshot: November 2022–April 2025
-- Geography/search scope: United States, `data analyst`
-- License shown on Kaggle: Apache 2.0
+- License listed on Kaggle: Apache 2.0
 
-The raw CSV is intentionally excluded from version control because it is large. Download the Kaggle ZIP and extract `gsearch_jobs.csv` to `data/raw/`, or pass a different input path to the preparation script.
+Download `gsearch_jobs.csv` and place it in `data/raw/`. The raw dataset is excluded from GitHub because it is large.
 
-## Project structure
+## Your workflow
 
-```text
-entry-level-data-job-market/
-├── data/processed/          # Analysis and Tableau-ready CSV files
-├── notebooks/              # Reproducible analysis notebook
-├── outputs/                # Charts and summary workbook
-├── sql/                    # SQLite schema and analysis queries
-├── src/                    # Data preparation and analysis scripts
-├── README.md
-└── requirements.txt
-```
+### 1. Understand the data
+- Load the CSV with Pandas.
+- Record its shape, columns, data types, missing values, and duplicate counts.
+- Read representative titles and descriptions before defining “entry level.”
 
-## Reproduce the analysis
+### 2. Clean the postings
+- Remove duplicate job IDs.
+- Standardize dates, locations, salaries, and remote-work indicators.
+- Create and justify your own entry-level rule.
+- Audit false positives such as senior, manager, lead, and director roles.
+
+### 3. Normalize skills
+- Inspect `description_tokens`.
+- Convert the stored lists into one row per job-skill pair.
+- Standardize aliases such as `power_bi` and `Power BI`.
+
+### 4. Analyze with SQL
+- Load clean tables into SQLite.
+- Calculate skill frequency with distinct job counts.
+- Compare roles, locations, remote work, and disclosed salaries.
+
+### 5. Build a Tableau dashboard
+- Market overview
+- Top skills
+- Role × skill comparison
+- Location and remote-work filters
+- A learning roadmap supported by your analysis
+
+## Run
 
 ```bash
 python -m pip install -r requirements.txt
 python src/prepare_data.py --input data/raw/gsearch_jobs.csv
-python src/run_analysis.py
 ```
 
-The first script cleans and deduplicates postings, applies the documented entry-level classifier, normalizes skills and locations, and writes a SQLite database. The second script runs the SQL analysis and exports charts and summary tables.
-
-## Entry-level definition
-
-A posting is included when it meets one of these rules:
-
-- its title contains `entry level`, `junior`, `jr`, `graduate`, `new grad`, or `early career`; or
-- its description explicitly asks for 0–2 years of experience; or
-- its description states that no prior experience is required.
-
-Postings with seniority indicators such as `senior`, `lead`, `manager`, `director`, `principal`, or `staff` in the title are excluded. This is a transparent, rule-based classifier rather than a claim that every employer labels experience consistently.
-
-## Tableau dashboard plan
-
-Use `data/processed/tableau_job_skills.csv` as the primary source and relate it to `jobs_clean.csv` on `job_key`.
-
-- Overview: posting count, salary disclosure rate, remote share, and median advertised annual salary.
-- Skills: ranked bars for skill frequency; filters for role family, state, remote status, and posting year.
-- Roles and locations: heat map of skill demand by role family and state.
-- Roadmap: cumulative posting coverage from learning SQL, Excel, Python, Tableau/Power BI, and cloud tools.
-
-## Limitations
-
-- The source is a rolling Google Jobs search for Data Analyst, not a census of all U.S. openings.
-- Job descriptions and salary fields are employer-supplied and may be incomplete.
-- Entry-level classification and sector labels are rule-based; the processed data retains the signals so they can be audited.
-- Posting dates reflect the source snapshot and should not be presented as current market conditions.
-
+The starter files intentionally contain `TODO` sections rather than completed analysis. Commit after each meaningful milestone so the repository shows your own process.
